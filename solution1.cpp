@@ -1,9 +1,11 @@
+#include "solutions.h"
+
 #include <iostream>
 #include <numeric>
 
 #include "utils/read_utils.h"
 
-int main() {
+auto Solutions::Solution1() -> Answers {
     auto lines = ReadUtils::lines("inputs/input1.txt");
 
     std::vector<int> largestThree(3, 0);
@@ -25,7 +27,5 @@ int main() {
     int answerA = *std::prev(largestThree.cend());
     int answerB = std::accumulate(largestThree.cbegin(), largestThree.cend(), 0);
 
-    std::cout << answerA << " " << answerB << std::endl;
-
-    return 0;
+    return {answerA, answerB};
 }
