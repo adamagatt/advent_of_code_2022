@@ -1,5 +1,7 @@
 #include "solutions.h"
 
+#include <algorithm>
+#include <deque>
 #include <iostream>
 #include <numeric>
 
@@ -8,17 +10,17 @@
 auto Solutions::Solution1() -> Answers {
     auto lines = ReadUtils::lines("inputs/input1.txt");
 
-    std::vector<int> largestThree(3, 0);
+    std::deque<int> largestThree(3, 0);
 
     int currentTotal = 0;
     for (const auto& line : lines) {
         if (!line.empty()) {
             currentTotal += std::stoi(line);
         } else {
-            auto position = std::lower_bound(largestThree.cbegin(), largestThree.cend(), currentTotal);
+            auto position = std::ranges::lower_bound(largestThree, currentTotal);
             if (position != largestThree.cbegin()) {
                 largestThree.insert(position, currentTotal);
-                largestThree.erase(largestThree.cbegin());
+                largestThree.pop_front();
             }
             currentTotal = 0;
         }
