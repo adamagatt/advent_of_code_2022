@@ -1,0 +1,43 @@
+BasedOnStyle: Webkit
+IndentWidth: 4
+UseTab: Never
+ContinuationIndentWidth: 4
+
+NamespaceIndentation: All
+AccessModifierOffset: -4
+
+BinPackArguments: false
+BinPackParameters: false
+ExperimentalAutoDetectBinPacking: false
+AllowAllParametersOfDeclarationOnNextLine: false
+AllowShortIfStatementsOnASingleLine: true
+BreakBeforeConceptDeclarations: true
+IndentRequires: false
+
+# this stops it formatting void foo() into
+# void
+# foo()
+PenaltyReturnTypeOnItsOwnLine: 1000000
+
+AlignAfterOpenBracket: BlockIndent
+ColumnLimit: 120
+DerivePointerAlignment: false
+PointerAlignment: Left
+BraceWrapping:
+  AfterClass:      false
+  AfterControlStatement: false
+  AfterEnum:       false
+  AfterFunction:   false
+  AfterNamespace:  false
+  AfterObjCDeclaration: false
+  AfterStruct:     false
+  AfterUnion:      false
+  BeforeCatch:     false
+  BeforeElse:      false
+  IndentBraces:    false
+  AfterCaseLabel: false
+  BeforeLambdaBody: false
+BreakBeforeBraces: Custom
+
+# Ensure templates declarations are always on a separate line
+AlwaysBreakTemplateDeclarations : Yes

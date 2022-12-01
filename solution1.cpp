@@ -1,7 +1,7 @@
 #include <iostream>
 #include <numeric>
 
-#include "read_utils.h"
+#include "utils/read_utils.h"
 
 int main() {
     auto lines = ReadUtils::lines("inputs/input1.txt");
@@ -27,5 +27,5 @@ int main() {
 
     std::cout << answerA << " " << answerB << std::endl;
 
-    return 0; 
+    return 0;
 }
