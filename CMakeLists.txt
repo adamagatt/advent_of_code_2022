@@ -1,13 +1,14 @@
 cmake_minimum_required(VERSION 3.20.0)
 project(aoc22)
 
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR})
 
 set(SOURCES
+    main.cpp
     solution1.cpp
     
     utils/read_utils.cpp
-    utils/read_utils.h
 )
 
 set(INPUTS
