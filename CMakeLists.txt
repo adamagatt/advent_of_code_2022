@@ -5,7 +5,9 @@ set(CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR})
 
 set(SOURCES
     solution1.cpp
-    read_utils.h
+    
+    utils/read_utils.cpp
+    utils/read_utils.h
 )
 
 set(INPUTS
