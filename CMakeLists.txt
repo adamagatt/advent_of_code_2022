@@ -7,12 +7,14 @@ set(CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR})
 set(SOURCES
     main.cpp
     solution1.cpp
+    solution2.cpp
     
     utils/read_utils.cpp
 )
 
 set(INPUTS
     inputs/input1.txt
+    inputs/input2.txt
 )
 
 add_executable(aoc22 ${SOURCES})

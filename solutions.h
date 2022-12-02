@@ -6,9 +6,10 @@
 namespace Solutions {
     using Answers = std::pair<int, int>;
 
-    constexpr int MAX = 1;
+    constexpr int MAX = 2;
 
     auto Solution1() -> Answers;
+    auto Solution2() -> Answers;
 }
 
 #endif
