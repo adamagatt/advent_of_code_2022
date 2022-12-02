@@ -57,12 +57,11 @@ auto shapeToGetResult(Shape theirs, Result result) -> Shape {
          :                            beats.at(beats.at(theirs)); // Lol ugly hack
 }
 
-auto parsePartA(const std::string& input) -> std::pair<Shape, Shape> {
-    return { charToShape.at(input.at(0)), charToShape.at(input.at(2)) };
-}
-
-auto parsePartB(const std::string& input) -> std::pair<Shape, Result> {
-    return { charToShape.at(input.at(0)), charToResult.at(input.at(2)) };
+template <typename T, typename U>
+auto parseChars(const std::unordered_map<char, T>& firstMap, const std::unordered_map<char, U>& secondMap) {
+    return [&firstMap, &secondMap](const std::string& input) -> std::pair<T, U> {
+        return { firstMap.at(input.at(0)), secondMap.at(input.at(2)) };
+    };
 }
 
 auto Solutions::Solution2() -> Answers {
@@ -70,14 +69,16 @@ auto Solutions::Solution2() -> Answers {
     auto inputs = ReadUtils::lines("inputs/input2.txt");
 
     auto scoresPartA = inputs
-        | std::views::transform(parsePartA)
+        | std::views::transform(parseChars(charToShape, charToShape))
         | std::views::transform(scoreShapes);
 
     int answerA = std::accumulate(scoresPartA.begin(), scoresPartA.end(), 0);
 
     auto scoresPartB = inputs
-        | std::views::transform(parsePartB)
-        | std::views::transform([](const std::pair<Shape, Result>& parsed){
+        | std::views::transform(parseChars(charToShape, charToResult))
+        // We want to convert a (Shape, Result) pair into a (Shape, Shape) pair
+        // that achieves that Result
+        | std::views::transform([](const std::pair<Shape, Result>& parsed) {
             const auto& [theirs, result] = parsed;
             return std::pair{theirs, shapeToGetResult(theirs, result)};
         })
