@@ -34,10 +34,15 @@ const std::unordered_map<Shape, Shape> beats {
     {Shape::SCISSORS, Shape::ROCK}
 };
 
-auto matchupResult(Shape theirs, Shape mine) -> Result {
-    return (mine == theirs)           ? Result::DRAW
-         : (mine == beats.at(theirs)) ? Result::WIN
-         :                              Result::LOSE;
+/// Calculates the result of a {theirs, mine} shape, returning {result, mine} 
+auto matchupResult(std::pair<Shape, Shape> shapes) -> std::pair<Result, Shape> {
+    const auto& [theirs, mine] = shapes;
+
+    Result result = (mine == theirs)           ? Result::DRAW
+                  : (mine == beats.at(theirs)) ? Result::WIN
+                  :                              Result::LOSE;
+    
+    return {result, mine};
 }
 
 const std::unordered_map<Result, int> scoreForResult {
@@ -46,9 +51,9 @@ const std::unordered_map<Result, int> scoreForResult {
     {Result::LOSE, 0}
 };
 
-auto scoreShapes(const std::pair<Shape, Shape>& shapes) -> int {
-    const auto& [theirs, mine] = shapes;
-    return scoreForResult.at(matchupResult(theirs, mine)) + static_cast<int>(mine);
+auto scoreRound(const std::pair<Result, Shape>& factors) -> int {
+    const auto& [result, myShape] = factors;
+    return scoreForResult.at(result) + static_cast<int>(myShape);
 }
 
 auto shapeToGetResult(Shape theirs, Result result) -> Shape {
@@ -58,7 +63,10 @@ auto shapeToGetResult(Shape theirs, Result result) -> Shape {
 }
 
 template <typename T, typename U>
-auto parseChars(const std::unordered_map<char, T>& firstMap, const std::unordered_map<char, U>& secondMap) {
+auto parseChars(
+    const std::unordered_map<char, T>& firstMap,
+    const std::unordered_map<char, U>& secondMap
+) {
     return [&firstMap, &secondMap](const std::string& input) -> std::pair<T, U> {
         return { firstMap.at(input.at(0)), secondMap.at(input.at(2)) };
     };
@@ -69,20 +77,19 @@ auto Solutions::Solution2() -> Answers {
     auto inputs = ReadUtils::lines("inputs/input2.txt");
 
     auto scoresPartA = inputs
-        | std::views::transform(parseChars(charToShape, charToShape))
-        | std::views::transform(scoreShapes);
+        | std::views::transform(parseChars(charToShape, charToShape)) // {their Shape, my Shape}
+        | std::views::transform(matchupResult)                        // {Result, my Shape}
+        | std::views::transform(scoreRound);                          // int
 
     int answerA = std::accumulate(scoresPartA.begin(), scoresPartA.end(), 0);
 
     auto scoresPartB = inputs
-        | std::views::transform(parseChars(charToShape, charToResult))
-        // We want to convert a (Shape, Result) pair into a (Shape, Shape) pair
-        // that achieves that Result
-        | std::views::transform([](const std::pair<Shape, Result>& parsed) {
+        | std::views::transform(parseChars(charToShape, charToResult))          // {their Shape, Result}
+        | std::views::transform([](const std::pair<Shape, Result>& parsed) {    // {Result, my Shape}
             const auto& [theirs, result] = parsed;
-            return std::pair{theirs, shapeToGetResult(theirs, result)};
+            return std::pair{result, shapeToGetResult(theirs, result)};
         })
-        | std::views::transform(scoreShapes);
+        | std::views::transform(scoreRound);                                    // int
 
     int answerB = std::accumulate(scoresPartB.begin(), scoresPartB.end(), 0);
 
