@@ -19,7 +19,10 @@ int main() {
 
     int choice = selectProblem();
 
-    auto solution = (choice == 1) ? Solutions::Solution1 : (choice == 2) ? Solutions::Solution2 : nullptr;
+    auto solution = (choice == 1) ? Solutions::Solution1
+        : (choice == 2)           ? Solutions::Solution2
+        : (choice == 3)           ? Solutions::Solution3
+                                  : nullptr;
 
     if (solution != nullptr) {
         auto [answerA, answerB] = solution();
