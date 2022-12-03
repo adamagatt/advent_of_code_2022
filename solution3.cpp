@@ -6,6 +6,10 @@
 #include <numeric>
 #include <unordered_set>
 
+auto inSet(const std::unordered_set<char>& set) {
+    return std::bind_front(&std::unordered_set<char>::contains, set);
+}
+
 int priority(char c) {
     if (c >= 'a' && c <= 'z') {
         return c - 'a' + 1;
@@ -20,30 +24,27 @@ auto priorityOfDoubledItem(const std::string& line) -> int {
 
     std::unordered_set<char> left {line.cbegin(), halfway};
 
-    auto findItem = std::find_if(halfway, line.cend(), [&left](char c) {return left.contains(c);});
-    if (findItem != line.cend()) {
-        return priority(*findItem);
-    } else {
-        return -1;
-    }
+    auto findItem = std::find_if(halfway, line.cend(), inSet(left));
+
+    return priority(*findItem); // Note: No handling at all of failure case; assumes input is valid
 }
 
 auto presentInThreePacks(const std::string& elf1, const std::string& elf2, const std::string& elf3) -> char {
-    std::unordered_set<char> presentInOne {elf1.cbegin(), elf1.cend()};
+    std::unordered_set<char> firstPack {elf1.cbegin(), elf1.cend()};
 
-    std::unordered_set<char> presentInTwo;
+    std::unordered_set<char> inTwoPacks;
     std::copy_if(
         elf2.cbegin(), elf2.cend(),
-        std::inserter(presentInTwo, presentInTwo.end()),
-        [&presentInOne](char c){return presentInOne.contains(c);}
+        std::inserter(inTwoPacks, inTwoPacks.end()),
+        inSet(firstPack)
     );
 
-    auto presentInThree = std::find_if(
+    auto inThreePacks = std::find_if(
         elf3.cbegin(), elf3.cend(),
-        [&presentInTwo](char c){return presentInTwo.contains(c);}
+        inSet(inTwoPacks)
     );
 
-    return *presentInThree; // Note: No handling at all of failure case; assumes input is valid
+    return *inThreePacks; // Note: No handling at all of failure case; assumes input is valid
 }
 
 auto Solutions::Solution3() -> Answers {
