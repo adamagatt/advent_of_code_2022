@@ -5,7 +5,7 @@
 #include <ranges>
 #include <unordered_map>
 
-#include "utils/read_utils.h"
+#include "../utils/read.h"
 
 /// Shapes include the score gained for us throwing them
 enum class Shape : int { ROCK = 1, PAPER = 2, SCISSORS = 3 };
@@ -74,7 +74,7 @@ auto parseChars(
 
 auto Solutions::Solution2() -> Answers {
 
-    auto inputs = ReadUtils::lines("inputs/input2.txt");
+    auto inputs = Utils::readLines("inputs/input2.txt");
 
     auto scoresPartA = inputs
         | std::views::transform(parseChars(charToShape, charToShape)) // {their Shape, my Shape}

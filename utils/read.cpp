@@ -1,6 +1,8 @@
-#include "read_utils.h"
+#include "read.h"
 
-std::vector<std::string> ReadUtils::lines(const char* path) {
+#include <fstream>
+
+std::vector<std::string> Utils::readLines(const char* path) {
     std::vector<std::string> output;
 
     std::ifstream fileIn(path);

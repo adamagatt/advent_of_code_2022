@@ -1,4 +1,4 @@
-#include "solutions.h"
+#include "solutions/solutions.h"
 
 #include <iostream>
 #include <string>

@@ -6,11 +6,12 @@ set(CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR})
 
 set(SOURCES
     main.cpp
-    solution1.cpp
-    solution2.cpp
-    solution3.cpp
+
+    solutions/solution1.cpp
+    solutions/solution2.cpp
+    solutions/solution3.cpp
     
-    utils/read_utils.cpp
+    utils/read.cpp
 )
 
 set(INPUTS

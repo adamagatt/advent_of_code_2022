@@ -4,10 +4,10 @@
 #include <deque>
 #include <numeric>
 
-#include "utils/read_utils.h"
+#include "../utils/read.h"
 
 auto Solutions::Solution1() -> Answers {
-    auto lines = ReadUtils::lines("inputs/input1.txt");
+    auto lines = Utils::readLines("inputs/input1.txt");
 
     std::deque<int> largestThree(3, 0);
 

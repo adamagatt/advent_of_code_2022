@@ -1,14 +1,11 @@
 #include "solutions.h"
 
-#include "utils/read_utils.h"
+#include "../utils/functional.h"
+#include "../utils/read.h"
 
 #include <algorithm>
 #include <numeric>
 #include <unordered_set>
-
-auto inSet(const std::unordered_set<char>& set) {
-    return std::bind_front(&std::unordered_set<char>::contains, set);
-}
 
 int priority(char c) {
     if (c >= 'a' && c <= 'z') {
@@ -24,7 +21,7 @@ auto priorityOfDoubledItem(const std::string& line) -> int {
 
     std::unordered_set<char> left {line.cbegin(), halfway};
 
-    auto findItem = std::find_if(halfway, line.cend(), inSet(left));
+    auto findItem = std::find_if(halfway, line.cend(), Utils::inSet(left));
 
     return priority(*findItem); // Note: No handling at all of failure case; assumes input is valid
 }
@@ -36,19 +33,19 @@ auto presentInThreePacks(const std::string& elf1, const std::string& elf2, const
     std::copy_if(
         elf2.cbegin(), elf2.cend(),
         std::inserter(inTwoPacks, inTwoPacks.end()),
-        inSet(firstPack)
+        Utils::inSet(firstPack)
     );
 
     auto inThreePacks = std::find_if(
         elf3.cbegin(), elf3.cend(),
-        inSet(inTwoPacks)
+        Utils::inSet(inTwoPacks)
     );
 
     return *inThreePacks; // Note: No handling at all of failure case; assumes input is valid
 }
 
 auto Solutions::Solution3() -> Answers {
-    auto inputs = ReadUtils::lines("inputs/input3.txt");
+    auto inputs = Utils::readLines("inputs/input3.txt");
 
     int answerA = std::transform_reduce(
         inputs.cbegin(), inputs.cend(),
