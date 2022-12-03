@@ -28,6 +28,28 @@ auto priorityOfDoubledItem(const std::string& line) -> int {
     }
 }
 
+auto presentInThreePacks(const std::string& elf1, const std::string& elf2, const std::string& elf3) {
+    std::unordered_set<char> presentInOne {elf1.cbegin(), elf1.cend()};
+
+    std::unordered_set<char> presentInTwo;
+    std::copy_if(
+        elf2.cbegin(), elf2.cend(),
+        std::inserter(presentInTwo, presentInTwo.end()),
+        [&presentInOne](char c){return presentInOne.contains(c);}
+    );
+    auto found = std::find_if(
+        elf3.cbegin(), elf3.cend(),
+        [&presentInTwo](char c){return presentInTwo.contains(c);}
+    );
+
+    if (found != elf3.cend()) {
+        return *found;
+    } else {
+        return ' ';
+    }
+
+}
+
 auto Solutions::Solution3() -> Answers {
     auto inputs = ReadUtils::lines("inputs/input3.txt");
 
@@ -38,5 +60,12 @@ auto Solutions::Solution3() -> Answers {
         priorityOfDoubledItem
     );
 
-    return {answerA, 0};
+    int answerB = 0;
+    for (auto it = inputs.cbegin(); it < inputs.cend(); std::advance(it, 3)) {
+        auto elf1 = it, elf2 = std::next(it), elf3 = std::next(it, 2);
+
+        answerB += priority(presentInThreePacks(*elf1, *elf2, *elf3));
+    }
+
+    return {answerA, answerB};
 }
