@@ -44,7 +44,7 @@ auto presentInThreePacks(const std::string& elf1, const std::string& elf2, const
     return *inThreePacks; // Note: No handling at all of failure case; assumes input is valid
 }
 
-auto Solutions::Solution3() -> Answers {
+auto Solutions::solution3() -> Answers {
     auto inputs = Utils::readLines("inputs/input3.txt");
 
     int answerA = std::transform_reduce(

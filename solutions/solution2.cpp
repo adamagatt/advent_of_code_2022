@@ -72,7 +72,7 @@ auto parseChars(
     };
 }
 
-auto Solutions::Solution2() -> Answers {
+auto Solutions::solution2() -> Answers {
 
     auto inputs = Utils::readLines("inputs/input2.txt");
 

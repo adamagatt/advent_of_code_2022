@@ -6,7 +6,7 @@
 
 #include "../utils/read.h"
 
-auto Solutions::Solution1() -> Answers {
+auto Solutions::solution1() -> Answers {
     auto lines = Utils::readLines("inputs/input1.txt");
 
     std::deque<int> largestThree(3, 0);
