@@ -28,7 +28,7 @@ auto priorityOfDoubledItem(const std::string& line) -> int {
     }
 }
 
-auto presentInThreePacks(const std::string& elf1, const std::string& elf2, const std::string& elf3) {
+auto presentInThreePacks(const std::string& elf1, const std::string& elf2, const std::string& elf3) -> char {
     std::unordered_set<char> presentInOne {elf1.cbegin(), elf1.cend()};
 
     std::unordered_set<char> presentInTwo;
@@ -37,17 +37,13 @@ auto presentInThreePacks(const std::string& elf1, const std::string& elf2, const
         std::inserter(presentInTwo, presentInTwo.end()),
         [&presentInOne](char c){return presentInOne.contains(c);}
     );
-    auto found = std::find_if(
+
+    auto presentInThree = std::find_if(
         elf3.cbegin(), elf3.cend(),
         [&presentInTwo](char c){return presentInTwo.contains(c);}
     );
 
-    if (found != elf3.cend()) {
-        return *found;
-    } else {
-        return ' ';
-    }
-
+    return *presentInThree; // Note: No handling at all of failure case; assumes input is valid
 }
 
 auto Solutions::Solution3() -> Answers {
