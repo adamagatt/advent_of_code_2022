@@ -2,57 +2,50 @@
 
 #include "../utils/read.h"
 
-#include <functional>
-#include <numeric>
+#include <algorithm>
 #include <utility>
 #include <sstream>
-
-#include <iostream>
 
 struct Bounds {
     int lower;
     int upper;
 };
 
-auto boundsFromLine(const std::string& line) -> std::pair<Bounds, Bounds> {
+auto boundsFromText(const std::string& text) -> std::pair<Bounds, Bounds> {
     Bounds bounds1{}, bounds2{};
     
     char _char{};
-    std::stringstream ss(line);
+    std::stringstream ss(text);
     ss >> bounds1.lower >> _char >> bounds1.upper >> _char
        >> bounds2.lower >> _char >> bounds2.upper;
     
     return {bounds1, bounds2};
 }
 
-auto contains(const Bounds& outer, const Bounds& inner) {
+auto contains(const Bounds& outer, const Bounds& inner) -> bool {
     return outer.lower <= inner.lower
         && outer.upper >= inner.upper;
 }
 
-auto overlaps(const Bounds& lhs, const Bounds& rhs) {
-    return lhs.lower <= rhs.upper
-        && rhs.lower <= lhs.upper;
+auto eitherContainsTheOther(const std::pair<Bounds, Bounds>& pair) -> bool {
+    return contains(pair.first, pair.second)
+        || contains(pair.second, pair.first);
+}
+
+auto overlaps(const std::pair<Bounds, Bounds>& pair) -> bool {
+    return pair.first.lower <= pair.second.upper
+        && pair.second.lower <= pair.first.upper;
 }
 
 auto Solutions::solution4() -> Answers {
     auto inputs = Utils::readLines("inputs/input4.txt");
     
-    int answerA = std::count_if(
-        inputs.cbegin(), inputs.cend(),
-        [](const auto& line){
-            const auto& [bounds1, bounds2] = boundsFromLine(line);
-            return (contains(bounds1, bounds2) || contains(bounds2, bounds1));
-        }
-    );
+    std::vector<std::pair<Bounds, Bounds>> boundsPairs(inputs.size());
+    std::ranges::transform(inputs, boundsPairs.begin(), boundsFromText);
 
-    int answerB = std::count_if(
-        inputs.cbegin(), inputs.cend(),
-        [](const auto& line){
-            const auto& [bounds1, bounds2] = boundsFromLine(line);
-            return overlaps(bounds1, bounds2);
-        }
-    );
+    int answerA = std::ranges::count_if(boundsPairs, eitherContainsTheOther);
+
+    int answerB = std::ranges::count_if(boundsPairs, overlaps);
 
     return {answerA, answerB};
 }
