@@ -30,20 +30,29 @@ auto contains(const Bounds& outer, const Bounds& inner) {
         && outer.upper >= inner.upper;
 }
 
+auto overlaps(const Bounds& lhs, const Bounds& rhs) {
+    return lhs.lower <= rhs.upper
+        && rhs.lower <= lhs.upper;
+}
+
 auto Solutions::solution4() -> Answers {
     auto inputs = Utils::readLines("inputs/input4.txt");
     
-    int answerA = std::transform_reduce(
+    int answerA = std::count_if(
         inputs.cbegin(), inputs.cend(),
-        0,
-        std::plus{},
         [](const auto& line){
             const auto& [bounds1, bounds2] = boundsFromLine(line);
-            return (contains(bounds1, bounds2) || contains(bounds2, bounds1))
-                ? 1
-                : 0;
+            return (contains(bounds1, bounds2) || contains(bounds2, bounds1));
         }
     );
 
-    return {answerA, 0};
+    int answerB = std::count_if(
+        inputs.cbegin(), inputs.cend(),
+        [](const auto& line){
+            const auto& [bounds1, bounds2] = boundsFromLine(line);
+            return overlaps(bounds1, bounds2);
+        }
+    );
+
+    return {answerA, answerB};
 }
