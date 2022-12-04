@@ -10,8 +10,9 @@ namespace Solutions {
     auto solution1() -> Answers;
     auto solution2() -> Answers;
     auto solution3() -> Answers;
+    auto solution4() -> Answers;
 
-    constexpr int MAX = 3;
+    constexpr int MAX = 4;
 
     auto selectSolution() -> std::function<Answers()> ;
 }
