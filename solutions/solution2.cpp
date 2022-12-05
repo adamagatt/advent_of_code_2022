@@ -93,5 +93,5 @@ auto Solutions::solution2() -> Answers {
 
     int answerB = std::accumulate(scoresPartB.begin(), scoresPartB.end(), 0);
 
-    return { answerA, answerB };
+    return { std::to_string(answerA), std::to_string(answerB) };
 }

@@ -61,5 +61,5 @@ auto Solutions::solution3() -> Answers {
         answerB += priority(presentInThreePacks(*elf1, *elf2, *elf3));
     }
 
-    return {answerA, answerB};
+    return {std::to_string(answerA), std::to_string(answerB)};
 }

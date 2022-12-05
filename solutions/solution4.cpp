@@ -47,5 +47,5 @@ auto Solutions::solution4() -> Answers {
 
     int answerB = std::ranges::count_if(boundsPairs, overlaps);
 
-    return {answerA, answerB};
+    return { std::to_string(answerA), std::to_string(answerB) };
 }

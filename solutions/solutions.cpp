@@ -9,6 +9,7 @@ const std::unordered_map<int, std::function<Solutions::Answers()>> solutionForCh
     {2, Solutions::solution2},
     {3, Solutions::solution3},
     {4, Solutions::solution4},
+    {5, Solutions::solution5},
 };
 
 auto Solutions::selectSolution() -> std::function<Answers()> {

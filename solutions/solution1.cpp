@@ -28,5 +28,5 @@ auto Solutions::solution1() -> Answers {
     int answerA = *std::prev(largestThree.cend());
     int answerB = std::accumulate(largestThree.cbegin(), largestThree.cend(), 0);
 
-    return {answerA, answerB};
+    return {std::to_string(answerA), std::to_string(answerB)};
 }
