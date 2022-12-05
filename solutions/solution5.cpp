@@ -18,26 +18,28 @@ struct Instruction {
     int dest;
 };
 
-auto nextInteger(std::stringstream& ss) -> int {
-    int i;
+using Instructions = std::vector<Instruction>;
 
+auto nextInteger(std::stringstream& ss) -> int {
+    // Not sure if there is a better way to skip to the next integer
+    int i;
     while (!std::isdigit(ss.peek())) {
-        ss.ignore(1);
+        ss.ignore();
     }
     ss >> i;
     return i;
 }
 
-auto parseInput(std::vector<std::string> lines) -> std::pair<Stacks, std::vector<Instruction>> {
+auto parseInput(const std::vector<std::string>& lines) -> std::pair<Stacks, Instructions> {
     Stacks initialStacks;
-    std::vector<Instruction> instructions;
+    Instructions instructions;
 
     auto curLine = lines.cbegin();
     // Initial stack info has at least one '[' per line
     for ( ; curLine->find('[') != std::string::npos; ++curLine) {
         for (int i = 0; i < 9; i++) {
             if (char foundChar = curLine->at(i*4+1); foundChar != ' ') {
-                // push_front as stacks are built top-down
+                // push_front() as stacks are built top-down
                 initialStacks[i].push_front(foundChar);
             }
         }
@@ -61,6 +63,7 @@ auto parseInput(std::vector<std::string> lines) -> std::pair<Stacks, std::vector
 }
 
 auto executeInstruction(Stacks& stacks, const Instruction& instruction, bool reverseOrder) {
+    // Instructions are 1-indexed but stack array is 0-indexed
     Stack& sourceStack = stacks[instruction.source - 1];
     Stack& destStack = stacks[instruction.dest - 1];
 
@@ -74,8 +77,8 @@ auto executeInstruction(Stacks& stacks, const Instruction& instruction, bool rev
         );
     } else {
         // Wish I could switch on only the iterators instead of the entire
-        // algorithm call but I'm not sure I can store an std::iterator and
-        // std::reverse_iterator in the same type
+        // algorithm call but it seems there isn't a common base class that
+        // could be used to reference both an iterator and reverse_iterator
         destStack.insert(
             destStack.cend(),
             std::prev(sourceStack.cend(), instruction.amount),
@@ -99,7 +102,7 @@ auto solutionAnswer(const Stacks& stacks) -> std::string {
 
 auto Solutions::solution5() -> Answers {
     auto [stacksPartA, instructions] = parseInput(Utils::readLines("inputs/input5.txt"));
-    // Preserve original ordering for solving part B
+    // Make deep clone of initial stacks for solving part B
     Stacks stacksPartB = stacksPartA;
 
     // Run through instruction list for both parts of problem
