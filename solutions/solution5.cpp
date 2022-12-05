@@ -37,7 +37,8 @@ auto parseInput(std::vector<std::string> lines) -> std::pair<Stacks, std::vector
     for ( ; curLine->find('[') != std::string::npos; ++curLine) {
         for (int i = 0; i < 9; i++) {
             if (char foundChar = curLine->at(i*4+1); foundChar != ' ') {
-                initialStacks[i].push_back(foundChar);
+                // push_front as stacks are built top-down
+                initialStacks[i].push_front(foundChar);
             }
         }
     }
