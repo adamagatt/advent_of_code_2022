@@ -60,17 +60,28 @@ auto parseInput(std::vector<std::string> lines) -> std::pair<Stacks, std::vector
     return {initialStacks, instructions};
 }
 
-auto executeInstruction(Stacks& stacks, const Instruction& instruction) {
+auto executeInstruction(Stacks& stacks, const Instruction& instruction, bool reverseOrder) {
     Stack& sourceStack = stacks[instruction.source - 1];
     Stack& destStack = stacks[instruction.dest - 1];
 
-    // Reverse source iterators to copy elements across in reverse order.
-    // Simulates the reversing effect of moving crates one-by-one.
-    destStack.insert(
-        destStack.cend(),
-        sourceStack.crbegin(),
-        std::next(sourceStack.crbegin(), instruction.amount)
-    );
+    if (reverseOrder) {
+        // Reverse source iterators to copy elements across in reverse order.
+        // Simulates the reversing effect of moving crates one-by-one.
+        destStack.insert(
+            destStack.cend(),
+            sourceStack.crbegin(),
+            std::next(sourceStack.crbegin(), instruction.amount)
+        );
+    } else {
+        // Wish I could switch on only the iterators instead of the entire
+        // algorithm call but I'm not sure I can store an std::iterator and
+        // std::reverse_iterator in the same type
+        destStack.insert(
+            destStack.cend(),
+            std::prev(sourceStack.cend(), instruction.amount),
+            sourceStack.cend()
+        );
+    }
 
     // Would use deque::erase but apparently doesn't support reverse iterators
     for (int i = 0; i < instruction.amount; ++i) {
@@ -78,17 +89,24 @@ auto executeInstruction(Stacks& stacks, const Instruction& instruction) {
     }
 }
 
-auto Solutions::solution5() -> Answers {
-    auto [stacks, instructions] = parseInput(Utils::readLines("inputs/input5.txt"));
-
-    for (const Instruction& instruction : instructions) {
-        executeInstruction(stacks, instruction);
-    }
-
-    std::string answerA{};
+auto solutionAnswer(const Stacks& stacks) -> std::string {
+    std::string answer{};
     for (const Stack& stack : stacks) {
-        answerA.push_back(stack.back());
+        answer.push_back(stack.back());
+    }
+    return answer;
+}
+
+auto Solutions::solution5() -> Answers {
+    auto [stacksPartA, instructions] = parseInput(Utils::readLines("inputs/input5.txt"));
+    // Preserve original ordering for solving part B
+    Stacks stacksPartB = stacksPartA;
+
+    // Run through instruction list for both parts of problem
+    for (const Instruction& instruction : instructions) {
+        executeInstruction(stacksPartA, instruction, true);
+        executeInstruction(stacksPartB, instruction, false);
     }
 
-    return {answerA, ""};
+    return {solutionAnswer(stacksPartA), solutionAnswer(stacksPartB)};
 }
