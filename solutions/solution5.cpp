@@ -5,11 +5,11 @@
 #include <algorithm>
 #include <array>
 #include <cctype>
-#include <deque>
+#include <list>
 #include <sstream>
 #include <utility>
 
-using Stack = std::deque<char>;
+using Stack = std::list<char>;
 using Stacks = std::array<Stack, 9>;
 
 struct Instruction {
@@ -67,28 +67,26 @@ auto executeInstruction(Stacks& stacks, const Instruction& instruction, bool rev
     Stack& sourceStack = stacks[instruction.source - 1];
     Stack& destStack = stacks[instruction.dest - 1];
 
-    if (reverseOrder) {
-        // Reverse source iterators to copy elements across in reverse order.
-        // Simulates the reversing effect of moving crates one-by-one.
-        destStack.insert(
-            destStack.cend(),
-            sourceStack.crbegin(),
-            std::next(sourceStack.crbegin(), instruction.amount)
-        );
-    } else {
-        // Wish I could switch on only the iterators instead of the entire
-        // algorithm call but it seems there isn't a common base class that
-        // could be used to reference both an iterator and reverse_iterator
-        destStack.insert(
-            destStack.cend(),
-            std::prev(sourceStack.cend(), instruction.amount),
-            sourceStack.cend()
-        );
-    }
+    // With linked lists we don't need to copy elements one-by-one (linear time),
+    // but instead simply update the links to have the destination stack point to
+    // the moved crates instead of the source stack, with the crates themselves
+    // not needing to move memory location. We "splice" the selection of crates
+    // from one linked list to another.
+    destStack.splice(
+        destStack.cend(),
+        sourceStack,
+        std::prev(sourceStack.cend(), instruction.amount),
+        sourceStack.cend()
+    );
 
-    // Would use deque::erase but apparently doesn't support reverse iterators
-    for (int i = 0; i < instruction.amount; ++i) {
-        sourceStack.pop_back();
+    // We can't splice with reverse iterators so instead we handle the Part A
+    // solution by reversing the range of crates that were just moved. This is
+    // linear but the savings of having used splice() are still worthwhile.
+    if (reverseOrder) {
+        std::reverse(
+            std::prev(destStack.end(), instruction.amount),
+            destStack.end()
+        );
     }
 }
 
