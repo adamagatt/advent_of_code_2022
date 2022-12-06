@@ -12,6 +12,7 @@ auto anyRepeatedChars(const Counter& counter) -> bool {
     return std::ranges::any_of(
         counter,
         [](const auto& keyValue) {
+            // Second is value in key-value pair
             return keyValue.second > 1;
         }
     );
@@ -24,15 +25,13 @@ auto buildCounter(const auto& trailingIt, const auto& leadingIt) -> Counter {
         char c = *it;
         output[c] += 1;
     }
-    // leading iterator is included (not past range like end iterators)
-    ++output[*leadingIt];
 
     return output;
 }
 
 auto updateCounter(Counter& counter, const auto& trailingIt, const auto& leadingIt ) {
     // Add the char ABOUT to enter the window
-    char addChar = *std::next(leadingIt);
+    char addChar = *leadingIt;
     ++counter[addChar];
     
     // Remove the char JUST leaving the window
@@ -42,16 +41,16 @@ auto updateCounter(Counter& counter, const auto& trailingIt, const auto& leading
 
 auto answerForWindowSize(const std::string& input, const int windowSize) -> int {
     auto trailingIt = input.cbegin();
-    // leading is end-of-window, not one past like end iterators
-    auto leadingIt = std::next(trailingIt, windowSize - 1);
+    // Leading iterator is just past end-of-window, like an end iterator
+    auto leadingIt = std::next(trailingIt, windowSize);
     Counter counter = buildCounter(trailingIt, leadingIt);
 
-    int answer = windowSize; // Marker position is counted from end of window
-    for ( ; anyRepeatedChars(counter); ++trailingIt, ++leadingIt, ++answer) {
+    for ( ; anyRepeatedChars(counter); ++trailingIt, ++leadingIt) {
         updateCounter(counter, trailingIt, leadingIt);
     }
 
-    return answer;
+    // Return how far the leading edge of the window is from the input start
+    return leadingIt - input.cbegin();
 }
 
 auto Solutions::solution6() -> Answers {
