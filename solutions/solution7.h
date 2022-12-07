@@ -7,6 +7,9 @@
 #include <unordered_map>
 #include <vector>
 
+constexpr int TOTAL_DISK_SPACE = 70000000;
+constexpr int UNUSED_DISK_SPACE_REQUIRED = 30000000;
+
 struct File {
     std::string name;
     int size;
@@ -19,7 +22,8 @@ public:
     auto createSubdir(const std::string& name);
     auto getIncludedFileSize() const -> int;
     auto getTotalSize() const -> int;
-    auto totalSizeOfAllSubdirsWithAtMostMaxSize(int subdirMaxSize) const -> int;
+    auto totalSizeOfAllSubdirsWithAtMostMaxSize(int maxSize) const -> int;
+    auto smallestDeletionOfAtLeast(int minSize) const -> int;
 
     Directory* parent = nullptr;
     std::vector<File> files;

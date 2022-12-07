@@ -3,19 +3,23 @@
 
 #include "../utils/read.h"
 
+#include <algorithm>
 #include <cassert>
-#include <numeric>
 #include <functional>
-#include <iostream>
+#include <numeric>
 
 auto Solutions::solution7() -> Answers {
     auto lines = Utils::readTokens<3>("inputs/input7.txt");
 
     Directory root = buildTree(lines);
 
-    int answerA = root.totalSizeOfAllSubdirsWithAtMostMaxSize(100000);
+    const int answerA = root.totalSizeOfAllSubdirsWithAtMostMaxSize(100000);
 
-    return { std::to_string(answerA), "" };
+    const int spaceToDelete = root.getTotalSize() + UNUSED_DISK_SPACE_REQUIRED - TOTAL_DISK_SPACE;
+
+    const int answerB = root.smallestDeletionOfAtLeast(spaceToDelete);
+
+    return { std::to_string(answerA), std::to_string(answerB) };
 
 }
 
@@ -26,8 +30,6 @@ auto buildTree(const std::vector<Line>& lines) -> Directory {
     for (auto it = lines.cbegin(); it != lines.cend();) {
 
         const auto& line = *it;
-
-        //std::cout << (it-lines.cbegin()+1) << ": " << line[0] << " " << line[1] << " " << line[2] << std::endl;
 
         assert(("Attempting to process non-instruction", isInstruction(line)));
         
@@ -97,20 +99,46 @@ auto Directory::getTotalSize() const -> int {
 }
 
 // This is an insane metric to calculate. I also can't see how it's easier if calculated while progressing linearly through the raw input.
-auto Directory::totalSizeOfAllSubdirsWithAtMostMaxSize(int subdirMaxSize) const -> int {
-    // Get sizes of all subdirs, according to both metrics
+auto Directory::totalSizeOfAllSubdirsWithAtMostMaxSize(int maxSize) const -> int {
+    // Get sizes of all subdirs that don't exceed the max size
     int qualifyingSubdirSizes = std::transform_reduce(
         subdirs.cbegin(), subdirs.cend(),
         0, std::plus{},
-        [subdirMaxSize](const auto& subdir) {
-            return subdir.second->totalSizeOfAllSubdirsWithAtMostMaxSize(subdirMaxSize);
+        [maxSize](const auto& subdir) {
+            return subdir.second->totalSizeOfAllSubdirsWithAtMostMaxSize(maxSize);
         }
     );
 
     // Get own total size (according to normal definition)
     int totalSize = getTotalSize();
 
-    return (totalSize <= subdirMaxSize ? totalSize : 0) + qualifyingSubdirSizes;
+    // Only add own size to the returned accumulation if it is not too big
+    return qualifyingSubdirSizes + (totalSize <= maxSize ? totalSize : 0);
+}
+
+auto Directory::smallestDeletionOfAtLeast(int minSize) const -> int {
+    // If any child is over the requirement then return the smallest of those
+    int smallestOverRequirement = std::transform_reduce(
+        subdirs.cbegin(), subdirs.cend(),
+        0,
+        [minSize](int a, int b){
+            if (a >= minSize && b >= minSize) {
+                return std::min(a, b);
+            } else {
+                return std::max(a, b);
+            }
+        },
+        [minSize](const auto& subdirs){
+            return subdirs.second->smallestDeletionOfAtLeast(minSize);
+        }
+    );
+
+    if (smallestOverRequirement >= minSize) {
+        return smallestOverRequirement;
+    } else {
+        // Otherwise return this entire directory
+        return getTotalSize();
+    }
 }
 
 auto Directory::createSubdir(const std::string& name) {
