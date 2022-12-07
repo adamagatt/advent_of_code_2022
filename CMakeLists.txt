@@ -14,6 +14,7 @@ set(SOURCES
     solutions/solution4.cpp
     solutions/solution5.cpp
     solutions/solution6.cpp
+    solutions/solution7.cpp
 
     utils/read.cpp
 )
@@ -25,6 +26,7 @@ set(INPUTS
     inputs/input4.txt
     inputs/input5.txt
     inputs/input6.txt
+    inputs/input7.txt
 )
 
 add_executable(aoc22 ${SOURCES})

@@ -14,8 +14,9 @@ namespace Solutions {
     auto solution4() -> Answers;
     auto solution5() -> Answers;
     auto solution6() -> Answers;
+    auto solution7() -> Answers;
 
-    constexpr int MAX = 6;
+    constexpr int MAX = 7;
 
     auto selectSolution() -> std::function<Answers()> ;
 }
