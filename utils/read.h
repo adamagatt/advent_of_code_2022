@@ -1,6 +1,7 @@
 #ifndef __READ_H
 #define __READ_H
 
+#include <algorithm>
 #include <array>
 #include <fstream>
 #include <sstream>
@@ -8,6 +9,10 @@
 #include <vector>
 
 namespace Utils {
+    [[nodiscard]] auto max(int a, int b) -> int;
+
+    [[nodiscard]] auto parseIntChar(char c) -> int;
+
     [[nodiscard]] auto readLines(const char* path) -> std::vector<std::string>;
 
     template <size_t N>
@@ -25,6 +30,23 @@ namespace Utils {
         }
 
         return output;
+    }
+
+    template <size_t R, size_t C>
+    using Grid = std::array<std::array<int, C>, R>;
+
+    template <size_t R, size_t C>
+    auto readGrid(const std::string& path) -> Grid<R, C> {
+        Grid<R, C> grid;
+
+        std::ifstream fileIn(path);
+
+        std::array<int, C>* row = grid.begin();
+        for (std::string line; std::getline(fileIn, line); ++row) {
+            std::ranges::transform(line, row->begin(), parseIntChar);
+        }
+
+        return grid;
     }
 }
 
