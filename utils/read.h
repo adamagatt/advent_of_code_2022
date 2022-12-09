@@ -9,8 +9,6 @@
 #include <vector>
 
 namespace Utils {
-    [[nodiscard]] auto max(int a, int b) -> int;
-
     [[nodiscard]] auto parseIntChar(char c) -> int;
 
     [[nodiscard]] auto readLines(const char* path) -> std::vector<std::string>;

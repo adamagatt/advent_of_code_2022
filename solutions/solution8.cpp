@@ -4,8 +4,7 @@
 #include <numeric>
 
 auto Solutions::solution8() -> Answers {
-
-    const Utils::Grid<ROWS, COLS> trees = Utils::readGrid<ROWS, COLS>("inputs/input8.txt");
+    const TreeGrid trees = Utils::readGrid<ROWS, COLS>("inputs/input8.txt");
 
     int answerA = solvePartA(trees);
     int answerB = solvePartB(trees);
@@ -13,44 +12,65 @@ auto Solutions::solution8() -> Answers {
     return { std::to_string(answerA), std::to_string(answerB) };
 }
 
-auto solvePartA(const Utils::Grid<ROWS, COLS>& trees) -> int {
 
-    Utils::Grid<ROWS, COLS> maxFromLeft, maxFromRight, maxFromTop, maxFromBottom;
+auto solvePartA(const TreeGrid& trees) -> int {
 
+    const auto [maxFromLeft, maxFromRight] = performRowScans(trees);
+    const auto [maxFromTop, maxFromBottom] = performColumnScans(trees);      
+
+    return countVisibleTrees(trees, maxFromLeft, maxFromRight, maxFromTop, maxFromBottom);
+}
+
+
+auto performRowScans(const TreeGrid& trees) -> std::pair<TreeGrid, TreeGrid> {
+    TreeGrid maxFromLeft, maxFromRight;
+    
     for (size_t r = 0; r < ROWS; ++r) {
         const std::array<int, COLS>& curRow = trees[r];
+
         std::inclusive_scan(
             curRow.cbegin(), curRow.cend(),
             maxFromLeft[r].begin(),
-            Utils::max
+            std::ranges::max
         );
 
         std::inclusive_scan(
             curRow.crbegin(), curRow.crend(),
             maxFromRight[r].rbegin(),
-            Utils::max
+            std::ranges::max
         );
     }
 
-    for (size_t c = 0; c < COLS; ++c) {
-        maxFromTop[0][c] = trees[0][c];
-        maxFromBottom[ROWS-1][c] = trees[ROWS - 1][c];
-
-        for (size_t r = 1; r < ROWS; ++r) {
-            maxFromTop[r][c] = std::max(maxFromTop[r-1][c], trees[r][c]);
-            maxFromBottom[ROWS - 1 -r][c] = std::max(maxFromBottom[ROWS - r][c], trees[ROWS - 1 -r][c]);
-        }
-    }
-
-    return countVisibleTrees(trees, maxFromLeft, maxFromRight, maxFromTop, maxFromBottom);
+    return {maxFromLeft, maxFromRight};
 }
 
+
+auto performColumnScans(const TreeGrid& trees) -> std::pair<TreeGrid, TreeGrid> {
+    TreeGrid maxFromTop, maxFromBottom;
+
+    for (size_t c = 0; c < COLS; ++c) {
+        maxFromTop[0][c] = trees[0][c];
+        for (size_t r = 1; r < ROWS; ++r) {
+            maxFromTop[r][c] = std::max(maxFromTop[r-1][c], trees[r][c]);
+        }
+
+        maxFromBottom[ROWS-1][c] = trees[ROWS - 1][c];
+        for (size_t r = ROWS - 2; r > 0; --r) {
+            maxFromBottom[r][c] = std::max(maxFromBottom[r+1][c], trees[r][c]);
+        }
+        maxFromBottom[0][c] = std::max(maxFromBottom[1][c], trees[0][c]);
+    }  
+
+    return {maxFromTop, maxFromBottom};
+}
+
+
 auto countVisibleTrees(
-    const Utils::Grid<ROWS, COLS>& trees,
-    const Utils::Grid<ROWS, COLS>& maxFromLeft,
-    const Utils::Grid<ROWS, COLS>& maxFromRight,
-    const Utils::Grid<ROWS, COLS>& maxFromTop,
-    const Utils::Grid<ROWS, COLS>& maxFromBottom
+    const TreeGrid& trees,
+    const TreeGrid& maxFromLeft,
+    const TreeGrid& maxFromRight,
+    const TreeGrid& maxFromTop,
+    const TreeGrid& maxFromBottom
 ) -> int {
 
     // All outside trees are always visible
@@ -71,7 +91,8 @@ auto countVisibleTrees(
     return visible;
 }
 
-auto solvePartB(const Utils::Grid<ROWS, COLS>& trees) -> int {
+
+auto solvePartB(const TreeGrid& trees) -> int {
     int bestScore = 0;
 
     for (size_t r = 1; r < (ROWS - 1); ++r) {
@@ -82,7 +103,8 @@ auto solvePartB(const Utils::Grid<ROWS, COLS>& trees) -> int {
     return bestScore;
 }
 
-auto scoreForTree(const Utils::Grid<ROWS, COLS>& trees, size_t tr, size_t tc) -> int {
+
+auto scoreForTree(const TreeGrid& trees, size_t tr, size_t tc) -> int {
     const int curHeight = trees[tr][tc];
 
     int leftBlocker = 0;

@@ -6,18 +6,23 @@
 constexpr size_t ROWS = 99;
 constexpr size_t COLS = 99;
 
-auto solvePartA(const Utils::Grid<ROWS, COLS>& trees) -> int;
+using TreeGrid = Utils::Grid<ROWS, COLS>;
+
+auto solvePartA(const TreeGrid& trees) -> int;
+
+auto performRowScans(const TreeGrid& trees) -> std::pair<TreeGrid, TreeGrid>;
+auto performColumnScans(const TreeGrid& trees) -> std::pair<TreeGrid, TreeGrid>;
 
 auto countVisibleTrees(
-    const Utils::Grid<ROWS, COLS>& trees,
-    const Utils::Grid<ROWS, COLS>& maxFromLeft,
-    const Utils::Grid<ROWS, COLS>& maxFromRight,
-    const Utils::Grid<ROWS, COLS>& maxFromTop,
-    const Utils::Grid<ROWS, COLS>& maxFromBottom
+    const TreeGrid& trees,
+    const TreeGrid& maxFromLeft,
+    const TreeGrid& maxFromRight,
+    const TreeGrid& maxFromTop,
+    const TreeGrid& maxFromBottom
 ) -> int;
 
-auto solvePartB(const Utils::Grid<ROWS, COLS>& trees) -> int;
+auto solvePartB(const TreeGrid& trees) -> int;
 
-auto scoreForTree(const Utils::Grid<ROWS, COLS>& trees, size_t r, size_t c) -> int;
+auto scoreForTree(const TreeGrid& trees, size_t r, size_t c) -> int;
 
 #endif

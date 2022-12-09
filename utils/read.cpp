@@ -1,9 +1,5 @@
 #include "read.h"
 
-auto Utils::max(int a, int b) -> int {
-    return std::max(a, b);
-}
-
 auto Utils::parseIntChar(char c) -> int {
     return c - '0';
 }
