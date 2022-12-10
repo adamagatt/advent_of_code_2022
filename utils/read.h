@@ -30,8 +30,11 @@ namespace Utils {
         return output;
     }
 
+    template <size_t C>
+    using Row = std::array<int, C>;
+
     template <size_t R, size_t C>
-    using Grid = std::array<std::array<int, C>, R>;
+    using Grid = std::array<Row<C>, R>;
 
     template <size_t R, size_t C>
     auto readGrid(const std::string& path) -> Grid<R, C> {

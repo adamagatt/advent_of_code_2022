@@ -6,12 +6,13 @@
 constexpr size_t ROWS = 99;
 constexpr size_t COLS = 99;
 
+using TreeRow = Utils::Row<COLS>;
 using TreeGrid = Utils::Grid<ROWS, COLS>;
 
 auto solvePartA(const TreeGrid& trees) -> int;
 
-auto performRowScans(const TreeGrid& trees) -> std::pair<TreeGrid, TreeGrid>;
-auto performColumnScans(const TreeGrid& trees) -> std::pair<TreeGrid, TreeGrid>;
+auto scanRowsForMaximums(const TreeGrid& trees) -> std::pair<TreeGrid, TreeGrid>;
+auto scanColumnsForMaximums(const TreeGrid& trees) -> std::pair<TreeGrid, TreeGrid>;
 
 auto countVisibleTrees(
     const TreeGrid& trees,

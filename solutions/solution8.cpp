@@ -15,28 +15,30 @@ auto Solutions::solution8() -> Answers {
 
 auto solvePartA(const TreeGrid& trees) -> int {
 
-    const auto [maxFromLeft, maxFromRight] = performRowScans(trees);
-    const auto [maxFromTop, maxFromBottom] = performColumnScans(trees);      
+    const auto [maxFromLeft, maxFromRight] = scanRowsForMaximums(trees);
+    const auto [maxFromTop, maxFromBottom] = scanColumnsForMaximums(trees);      
 
     return countVisibleTrees(trees, maxFromLeft, maxFromRight, maxFromTop, maxFromBottom);
 }
 
 
-auto performRowScans(const TreeGrid& trees) -> std::pair<TreeGrid, TreeGrid> {
+auto scanRowsForMaximums(const TreeGrid& trees) -> std::pair<TreeGrid, TreeGrid> {
     TreeGrid maxFromLeft, maxFromRight;
     
     for (size_t r = 0; r < ROWS; ++r) {
-        const std::array<int, COLS>& curRow = trees[r];
+        const TreeRow& treesInRow = trees[r];
+        const TreeRow& rowMaxFromLeft = maxFromLeft[r];
+        const TreeRow& rowMaxFromRight = maxFromRight[r];
 
         std::inclusive_scan(
-            curRow.cbegin(), curRow.cend(),
-            maxFromLeft[r].begin(),
+            treesInRow.cbegin(), treesInRow.cend(),
+            rowMaxFromLeft.begin(),
             std::ranges::max
         );
 
         std::inclusive_scan(
-            curRow.crbegin(), curRow.crend(),
-            maxFromRight[r].rbegin(),
+            treesInRow.crbegin(), treesInRow.crend(),
+            rowMaxFromRight.rbegin(),
             std::ranges::max
         );
     }
@@ -45,7 +47,7 @@ auto performRowScans(const TreeGrid& trees) -> std::pair<TreeGrid, TreeGrid> {
 }
 
 
-auto performColumnScans(const TreeGrid& trees) -> std::pair<TreeGrid, TreeGrid> {
+auto scanColumnsForMaximums(const TreeGrid& trees) -> std::pair<TreeGrid, TreeGrid> {
     TreeGrid maxFromTop, maxFromBottom;
 
     for (size_t c = 0; c < COLS; ++c) {
