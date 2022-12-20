@@ -27,8 +27,8 @@ auto scanRowsForMaximums(const TreeGrid& trees) -> std::pair<TreeGrid, TreeGrid>
     
     for (size_t r = 0; r < ROWS; ++r) {
         const TreeRow& treesInRow = trees[r];
-        const TreeRow& rowMaxFromLeft = maxFromLeft[r];
-        const TreeRow& rowMaxFromRight = maxFromRight[r];
+        TreeRow& rowMaxFromLeft = maxFromLeft[r];
+        TreeRow& rowMaxFromRight = maxFromRight[r];
 
         std::inclusive_scan(
             treesInRow.cbegin(), treesInRow.cend(),
