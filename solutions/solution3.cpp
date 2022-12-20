@@ -6,6 +6,7 @@
 
 #include <cctype>
 #include <algorithm>
+#include <execution>
 #include <numeric>
 #include <unordered_set>
 
@@ -13,6 +14,7 @@ auto Solutions::solution3() -> Answers {
     auto inputs = Utils::readLines("inputs/input3.txt");
 
     int answerA = std::transform_reduce(
+        std::execution::par_unseq,
         inputs.cbegin(), inputs.cend(),
         0, // init
         std::plus{},

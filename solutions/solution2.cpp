@@ -4,11 +4,13 @@
 #include "../utils/read.h"
 
 #include <algorithm>
+#include <execution>
 #include <numeric>
 
 namespace rv = std::views;
 
 auto Solutions::solution2() -> Answers {
+    const auto& par_vec = std::execution::par_unseq;
 
     auto inputs = Utils::readLines("inputs/input2.txt");
 
@@ -20,7 +22,7 @@ auto Solutions::solution2() -> Answers {
         })
         | rv::transform(scoreRound);
 
-    int answerA = std::accumulate(scoresPartA.begin(), scoresPartA.end(), 0);
+    int answerA = std::reduce(par_vec, scoresPartA.begin(), scoresPartA.end());
 
     auto scoresPartB = inputs
         | rv::transform(parseChars(charToShape, charToResult))
@@ -30,7 +32,7 @@ auto Solutions::solution2() -> Answers {
         })
         | rv::transform(scoreRound);
 
-    int answerB = std::accumulate(scoresPartB.begin(), scoresPartB.end(), 0);
+    int answerB = std::reduce(par_vec, scoresPartB.begin(), scoresPartB.end());
 
     return { std::to_string(answerA), std::to_string(answerB) };
 }
