@@ -31,7 +31,7 @@ auto Solutions::solution3() -> Answers {
     return {std::to_string(answerA), std::to_string(answerB)};
 }
 
-int priority(char c) {
+auto priority(char c) -> int {
     if (std::islower(c)) {
         return c - 'a' + 1;
     } else {
