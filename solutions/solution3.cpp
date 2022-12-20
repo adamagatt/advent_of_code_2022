@@ -1,48 +1,13 @@
 #include "solutions.h"
+#include "solution3.h"
 
 #include "../utils/functional.h"
 #include "../utils/read.h"
 
+#include <cctype>
 #include <algorithm>
 #include <numeric>
 #include <unordered_set>
-
-int priority(char c) {
-    if (c >= 'a' && c <= 'z') {
-        return c - 'a' + 1;
-    } else {
-        return c - 'A' + 27;
-    }
-}
-
-auto priorityOfDoubledItem(const std::string& line) -> int {
-    size_t num_items = line.size();
-    auto halfway = std::next(line.cbegin(), num_items/2);
-
-    std::unordered_set<char> left {line.cbegin(), halfway};
-
-    auto findItem = std::find_if(halfway, line.cend(), Utils::inSet(left));
-
-    return priority(*findItem); // Note: No handling at all of failure case; assumes input is valid
-}
-
-auto presentInThreePacks(const std::string& elf1, const std::string& elf2, const std::string& elf3) -> char {
-    std::unordered_set<char> firstPack {elf1.cbegin(), elf1.cend()};
-
-    std::unordered_set<char> inTwoPacks;
-    std::copy_if(
-        elf2.cbegin(), elf2.cend(),
-        std::inserter(inTwoPacks, inTwoPacks.end()),
-        Utils::inSet(firstPack)
-    );
-
-    auto inThreePacks = std::find_if(
-        elf3.cbegin(), elf3.cend(),
-        Utils::inSet(inTwoPacks)
-    );
-
-    return *inThreePacks; // Note: No handling at all of failure case; assumes input is valid
-}
 
 auto Solutions::solution3() -> Answers {
     auto inputs = Utils::readLines("inputs/input3.txt");
@@ -51,15 +16,46 @@ auto Solutions::solution3() -> Answers {
         inputs.cbegin(), inputs.cend(),
         0, // init
         std::plus{},
-        priorityOfDoubledItem
+        [](const auto& line){return priority(doubledItem(line));}
     );
 
     int answerB = 0;
     for (auto it = inputs.cbegin(); it < inputs.cend(); std::advance(it, 3)) {
-        auto elf1 = it, elf2 = std::next(it), elf3 = std::next(it, 2);
+        const auto& elf1 = *it;
+        const auto& elf2 = *std::next(it);
+        const auto& elf3 = *std::next(it, 2);
 
-        answerB += priority(presentInThreePacks(*elf1, *elf2, *elf3));
+        answerB += priority(presentInThreePacks(elf1, elf2, elf3));
     }
 
     return {std::to_string(answerA), std::to_string(answerB)};
+}
+
+int priority(char c) {
+    if (std::islower(c)) {
+        return c - 'a' + 1;
+    } else {
+        return c - 'A' + 27;
+    }
+}
+
+auto doubledItem(const std::string& line) -> char {
+    auto halfway = std::next(line.cbegin(), line.size()/2);
+
+    std::unordered_set firstHalf {line.cbegin(), halfway};
+
+    auto findItem = std::find_if(halfway, line.cend(), Utils::inSet(firstHalf));
+
+    return *findItem; // Note: No handling at all of failure case; assumes input is valid
+}
+
+auto presentInThreePacks(const std::string& elf1, const std::string& elf2, const std::string& elf3) -> char {
+    std::unordered_set candidates {elf1.cbegin(), elf1.cend()};
+
+    std::unordered_set elf2Chars {elf2.cbegin(), elf2.cend()};
+    std::erase_if(candidates, Utils::notInSet(elf2Chars));
+
+    auto commonChar = std::ranges::find_if(elf3, Utils::inSet(candidates));
+
+    return *commonChar; // Note: No handling at all of failure case; assumes input is valid
 }

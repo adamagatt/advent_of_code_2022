@@ -10,6 +10,10 @@ namespace Utils {
     auto inSet = [](const std::unordered_set<char>& set){
         return std::bind_front(&std::unordered_set<char>::contains, set);
     };
+
+    auto notInSet = [](const std::unordered_set<char>& set){
+        return std::not_fn(inSet(set));
+    };
 }
 
 #endif
